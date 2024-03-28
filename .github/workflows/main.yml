@@ -30,9 +30,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          sonar-scanner \
-            -Dsonar.projectKey=my_organization:my_project \
-            -Dsonar.projectName="My Project" \
-            -Dsonar.sources=. \
+          sonar-scanner
+            -Dsonar.projectKey=my_organization:my_project
+            -Dsonar.projectName="My Project"
+            -Dsonar.sources=.
             -Dsonar.host.url=$SONAR_HOST_URL
             -Dsonar.login=$SONAR_TOKEN
