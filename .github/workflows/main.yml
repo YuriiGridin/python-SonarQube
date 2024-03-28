@@ -1,27 +1,31 @@
-name: Build
+name: SonarQube Analysis
 
 on:
   push:
-    branches:
-      - main
-
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  build:
-    name: Build
+  sonar:
     runs-on: ubuntu-latest
-    permissions: read-all
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Use Python version
+        uses: actions/setup-python@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          python-version: '3.11'  # Replace with your project's Python version
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests (optional)
+        run: pytest  # Replace with your test command
+
+      - name: Analyze with SonarQube
+        uses: sonarsource/sonarcloud-github-action@master  # Replace with community action for self-hosted SonarQube
+        with:
+          projectKey: python
+          organization: ${{ secrets.SONAR_ORGANIZATION }}  # Optional for SonarCloud
+          token: ${{ secrets.SONAR_SCANNER_TOKEN }}
+          # (Optional) coverageReportFile: coverage.xml  # Path to your coverage report
