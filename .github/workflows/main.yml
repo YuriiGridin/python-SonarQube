@@ -2,37 +2,30 @@ name: SonarQube Analysis
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  sonarqube-analysis:
+  sonar:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Use Python version
+        uses: actions/setup-python@v3
         with:
-          python-version: '3.11'
+          python-version: '3.11'  # Replace with your project's Python version
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Run your tests here
-      # - name: Run Tests
-      #  run: pytest
+      - name: Run tests (optional)
+        run: pytest  # Replace with your test command
 
-      - name: SonarQube Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          sonar-scanner
-            -Dsonar.projectKey=my_organization:my_project
-            -Dsonar.projectName="My Project"
-            -Dsonar.sources=.
-            -Dsonar.host.url=$SONAR_HOST_URL
-            -Dsonar.login=$SONAR_TOKEN
+      - name: Analyze with SonarQube
+        uses: sonarsource/sonarcloud-github-action@v3  # Replace with community action for self-hosted SonarQube
+        with:
+          projectKey: test
+          organization: ${{ secrets.SONAR_ORGANIZATION }}  # Optional for SonarCloud
+          token: ${{ secrets.SONAR_SCANNER_TOKEN }}
+          # (Optional) coverageReportFile: coverage.xml  # Path to your coverage report
