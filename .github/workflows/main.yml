@@ -1,31 +1,22 @@
-name: SonarQube Analysis
-
 on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request.
   push:
-    branches: [ main ]
+    branches:
+      - master
   pull_request:
-
+      types: [opened, synchronize, reopened]
+name: Main Workflow
 jobs:
-  sonar:
+  sonarcloud:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Python version
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.11'  # Replace with your project's Python version
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run tests (optional)
-        run: pytest  # Replace with your test command
-
-      - name: Analyze with SonarQube
-        uses: sonarsource/sonarcloud-github-action@v3  # Replace with community action for self-hosted SonarQube
-        with:
-          projectKey: test
-          organization: ${{ secrets.SONAR_ORGANIZATION }}  # Optional for SonarCloud
-          token: ${{ secrets.SONAR_SCANNER_TOKEN }}
-          # (Optional) coverageReportFile: coverage.xml  # Path to your coverage report
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
