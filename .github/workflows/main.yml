@@ -20,7 +20,7 @@ jobs:
       run: sonar-scanner
            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-           -Dsonar.projectKey= "Python_Git"
+           -Dsonar.projectKey=Python_Git
            #-Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
            #-Dsonar.sources=$GITHUB_WORKSPACE
         #host: ${{ secrets.SONAR_HOST_URL }}
