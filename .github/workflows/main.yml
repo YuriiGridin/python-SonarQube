@@ -1,28 +1,15 @@
-name: SonarQube Analysis
+name: Main Workflow
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+on: push
 
 jobs:
-  sonar:
+  sonarQubeTrigger:
+    name: SonarQube Trigger
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Python version
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.11'  # Replace with your project's Python version
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Analyze with SonarQube
-        uses: sonarsource/sonarqube-scan-action@master  # Replace with community action for self-hosted SonarQube
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          projectBaseDir: .
+    - uses: actions/checkout@master
+    - name: SonarQube Scan
+      uses: kitabisa/sonarqube-action@master
+      with:
+        host: ${{ secrets.SONAR_HOST_URL }}
+        login: ${{ secrets.SONAR_TOKEN }}
